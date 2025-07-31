@@ -1,0 +1,68 @@
+/* Global Theme Variables */
+:root {
+  --border: 240 5% 84%;
+  --input: 240 5% 90%;
+  --ring: 240 5% 75%;
+  /* --background: 240 5% 10%; */
+    --background: 0 0% 6%;
+  --foreground: 0 0% 100%;
+
+  --primary: 190 100% 50%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 200 15% 50%;
+  --secondary-foreground: 0 0% 100%;
+
+  --card: 240 4.8% 10%;
+  --card-foreground: 0 0% 98%;
+
+  --muted: 240 5% 30%;
+  --muted-foreground: 240 5% 80%;
+
+  --accent: 339 100% 55%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 100% 55%;
+  --destructive-foreground: 0 0% 100%;
+
+  --popover: 240 6% 12%;
+  --popover-foreground: 0 0% 100%;
+
+  --cyber-blue: 190 100% 50%;
+  --cyber-purple: 270 100% 65%;
+  --cyber-green: 145 100% 50%;
+  --neon-pink: 330 100% 60%;
+
+  --sidebar-background: 240 5% 10%;
+  --sidebar-foreground: 0 0% 100%;
+  --sidebar-primary: 190 100% 50%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 145 100% 50%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-border: 240 4% 25%;
+  --sidebar-ring: 190 100% 50%;
+
+  --shadow-neon: 0 0 20px hsla(190, 100%, 50%, 0.5);
+  --shadow-glow: 0 0 40px hsla(190, 100%, 50%, 0.5);
+
+  --radius: 0.5rem;
+}
+
+/* Tailwind Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--accent));
+  border-radius: 10px;
+}

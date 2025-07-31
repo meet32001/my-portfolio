@@ -1,0 +1,32 @@
+/* SkillsOrb.css */
+#skills-orb {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: hsl(var(--background)); /* Match with portfolio theme */
+}
+
+.orb-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.orb {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background-color: hsl(var(--cyber-blue)); /* Orb background color */
+  box-shadow: 0 0 20px hsl(var(--cyber-blue));
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect for orb */
+.orb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 40px hsl(var(--cyber-blue));
+}
