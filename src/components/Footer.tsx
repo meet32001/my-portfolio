@@ -13,12 +13,12 @@ const Footer = () => {
           </div>
 
           {/* Copyright */}
-          <div className="flex items-center space-x-2 text-muted-foreground">
-            <span>© 2024 Made with</span>
-            <Heart className="h-4 w-4 text-red-500 animate-pulse" />
-            <span>and</span>
-            <Code className="h-4 w-4 text-primary" />
-            <span>by Your Name</span>
+          <div className="flex items-center text-muted-foreground space-x-2">
+            <span>© 2024 Crafted with futuristic code</span>
+            <span className="text-yellow-400">⚡</span>
+            <span>and caffeine</span>
+            <span className="text-pink-400">☕</span>
+            <span>by Meet Shah</span>
           </div>
 
           {/* Quick Links */}

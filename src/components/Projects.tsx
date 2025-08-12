@@ -6,72 +6,67 @@ import { ExternalLink, Github, Play } from "lucide-react";
 const Projects = () => {
   const projects = [
     {
-      title: "E-Commerce Platform",
-      description: "Full-stack e-commerce solution with real-time inventory management, payment processing, and analytics dashboard.",
-      technologies: ["React", "Node.js", "PostgreSQL", "Stripe", "AWS"],
-      features: [
-        "Real-time inventory tracking",
-        "Secure payment processing",
-        "Admin analytics dashboard",
-        "Mobile-responsive design"
+      title: "GetReadyToList – Service Platform",
+      description:
+        "Built a custom real-estate service platform around Housecall Pro, with a tailored booking flow, client onboarding, and high-end property presentation. I led UX, integrations, and automations to streamline operations end‑to‑end.",
+      technologies: [
+        "Next.js",
+        "TypeScript",
+        "Tailwind CSS",
+        "n8n",
+        "GA4",
+        "Sentry (monitoring)",
       ],
-      demoUrl: "#",
-      githubUrl: "#",
+      demoUrl: "https://www.getreadytolist.com",
+      githubUrl: null,
       status: "Live",
-      category: "Full Stack"
+      category: "Client Work",
+      image: "image.png",
+      demoAvailable: true,
     },
     {
-      title: "Task Management API",
-      description: "RESTful API for project management with team collaboration features, built with microservices architecture.",
-      technologies: ["Node.js", "Express", "MongoDB", "Docker", "JWT"],
-      features: [
-        "Microservices architecture",
-        "JWT authentication",
-        "Real-time notifications",
-        "Dockerized deployment"
-      ],
-      demoUrl: "#",
+      title: "Isolation",
+      description:
+        "Built a Canadian adaptation of the premium automotive concierge model from Europe’s Carsup, with secure storage, maintenance, and transport for luxury vehicles. I led UX, branding, and prototyping to help launch the service locally.",
+      technologies: ["Figma", "UI/UX Design", "Prototyping", "Branding"],
+      demoUrl: "https://www.figma.com/proto/GFlek4dggjEEjX2GX5dx8Y/Untitled?node-id=2-2&t=fW1CZIqkhxQWiIkz-1&starting-point-node-id=2%3A2",
       githubUrl: "#",
-      status: "Development",
-      category: "Backend"
+      status: "Live Prototype",
+      category: "UI/UX Design",
+      image: "isolation-mockup.jpg",
+      demoAvailable: true,
     },
     {
-      title: "Data Visualization Dashboard",
-      description: "Interactive dashboard for business intelligence with real-time data visualization and reporting capabilities.",
-      technologies: ["React", "D3.js", "Python", "FastAPI", "PostgreSQL"],
-      features: [
-        "Interactive charts & graphs",
-        "Real-time data updates",
-        "Custom report generation",
-        "Export functionality"
-      ],
-      demoUrl: "#",
-      githubUrl: "#",
+      title: "BulletWave: CS Team Builder",
+      description:
+        "An immersive, web-based Counter-Strike team management simulator. Users build squads, assign weapons, and compete against AI-generated teams with live API integration and real-time validation.",
+      technologies: ["JavaScript", "HTML5", "CSS3", "REST API", "LocalStorage"],
+      demoUrl: "https://counter-terrorist.vercel.app", // leave this as-is or add Netlify/Render link if deployed
+      githubUrl: "https://github.com/meet32001/CounterTerrorist.git", // replace with actual if public
       status: "Live",
-      category: "Frontend"
+      category: "Frontend",
+      image: "istockphoto-924055190-612x612.jpg",
+      demoAvailable: true,
     },
     {
-      title: "Cloud Infrastructure Automation",
-      description: "Infrastructure as Code solution for automated deployment and scaling of cloud resources.",
-      technologies: ["Terraform", "AWS", "Docker", "Kubernetes", "Python"],
-      features: [
-        "Automated provisioning",
-        "Auto-scaling capabilities",
-        "Cost optimization",
-        "Multi-environment support"
-      ],
-      demoUrl: "#",
-      githubUrl: "#",
-      status: "Live",
-      category: "DevOps"
-    }
+      title: "DomHelp – Domestic Service Platform",
+      description:
+        "PHP-based web application for booking household help services like maids, cooks, and elder care. Includes user login, admin dashboard, and booking management.",
+      technologies: ["PHP", "MySQL", "HTML", "CSS", "XAMPP"],
+      demoUrl: "#", // Replace with deployed demo link if available
+      githubUrl: "https://github.com/meet32001/domhelp",
+      status: "Completed",
+      category: "Full Stack",
+      image: "phpproject.png",
+      demoAvailable: false,
+    },
   ];
 
   return (
     <section id="projects" className="py-20 px-4 bg-gradient-hero">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-cyber bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-cyber bg-clip-text text-primary">
             Featured Projects
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -81,35 +76,47 @@ const Projects = () => {
 
         <div className="grid md:grid-cols-2 gap-8">
           {projects.map((project, index) => (
-            <Card 
+            <Card
               key={index}
               className="group hover:shadow-glow transition-all duration-300 bg-gradient-card border-border/50 hover:border-primary/30 hover:scale-105"
             >
               <CardHeader className="space-y-4">
+                <div className="w-full h-[300px] overflow-hidden rounded-md border border-border/30 mb-4">
+                  <img
+                    src={`/src/assets/${project.image}`}
+                    alt={`${project.title} preview`}
+                    className={`w-full h-full object-cover 
+      ${
+        project.title === "BulletWave: CS Team Builder"
+          ? "object-top scale-110"
+          : ""
+      }
+    `}
+                  />
+                </div>
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="text-xl font-bold text-foreground mb-2">
                       {project.title}
                     </h3>
-                    <Badge 
-                      variant="outline" 
-                      className={`text-xs ${
-                        project.status === 'Live' 
-                          ? 'border-cyber-green text-cyber-green' 
-                          : 'border-cyber-blue text-cyber-blue'
+                    <Badge
+                      className={`text-xs border rounded px-2 py-0.5 ${
+                        project.status === "Live"
+                          ? "text-cyber-green border-cyber-green bg-transparent"
+                          : "text-foreground"
                       }`}
                     >
                       {project.status}
                     </Badge>
                   </div>
-                  <Badge 
-                    variant="secondary" 
-                    className="bg-primary/10 text-primary border-primary/30"
+                  <Badge
+                    variant="outline"
+                    className="text-xs bg-primary/10 text-primary border border-primary/30 rounded px-2 py-0.5"
                   >
                     {project.category}
                   </Badge>
                 </div>
-                
+
                 <p className="text-muted-foreground leading-relaxed">
                   {project.description}
                 </p>
@@ -123,10 +130,9 @@ const Projects = () => {
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {project.technologies.map((tech, techIndex) => (
-                      <Badge 
+                      <Badge
                         key={techIndex}
-                        variant="outline"
-                        className="text-xs border-border/50 hover:border-primary/50 transition-colors duration-300"
+                        className="text-xs border border-border/50 rounded px-2 py-0.5 hover:border-primary/50 transition-colors duration-300"
                       >
                         {tech}
                       </Badge>
@@ -134,49 +140,49 @@ const Projects = () => {
                   </div>
                 </div>
 
-                {/* Key Features */}
-                <div>
-                  <h4 className="text-sm font-semibold text-foreground mb-3">
-                    Key Features
-                  </h4>
-                  <ul className="space-y-1">
-                    {project.features.map((feature, featureIndex) => (
-                      <li 
-                        key={featureIndex}
-                        className="text-sm text-muted-foreground flex items-center"
-                      >
-                        <div className="w-1.5 h-1.5 bg-primary rounded-full mr-3 flex-shrink-0" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
                 {/* Action Buttons */}
                 <div className="flex gap-3 pt-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex-1 group/btn hover:shadow-glow"
+                  {project.demoAvailable ? (
+                    <a
+                      href={project.demoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1"
+                    >
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full group/btn hover:shadow-glow"
+                      >
+                        <Play className="w-4 h-4 mr-2 group-hover/btn:scale-110 transition-transform duration-300" />
+                        Live Demo
+                      </Button>
+                    </a>
+                  ) : (
+                    <Button
+                      disabled
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 opacity-60 cursor-not-allowed"
+                    >
+                      Demo Unavailable
+                    </Button>
+                  )}
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-primary hover:underline"
                   >
-                    <Play className="w-4 h-4 mr-2 group-hover/btn:scale-110 transition-transform duration-300" />
-                    Live Demo
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="group/btn hover:bg-primary/10"
-                  >
-                    <Github className="w-4 h-4 mr-2 group-hover/btn:scale-110 transition-transform duration-300" />
-                    Code
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="group/btn hover:bg-primary/10"
-                  >
-                    <ExternalLink className="w-4 h-4 group-hover/btn:scale-110 transition-transform duration-300" />
-                  </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="group/btn hover:bg-primary/10"
+                    >
+                      <Github className="w-4 h-4 mr-2 group-hover/btn:scale-110 transition-transform duration-300" />
+                      Code
+                    </Button>
+                  </a>
                 </div>
               </CardContent>
             </Card>
@@ -188,10 +194,16 @@ const Projects = () => {
           <p className="text-muted-foreground mb-6">
             Want to see more of my work?
           </p>
-          <Button variant="cyber" size="lg" className="group">
-            <Github className="w-5 h-5 mr-2 group-hover:animate-spin" />
-            View All Projects on GitHub
-          </Button>
+          <a
+            href="https://github.com/meet32001"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button variant="cyber" size="lg" className="group">
+              <Github className="w-5 h-5 mr-2 group-hover:animate-spin" />
+              View All Projects on GitHub
+            </Button>
+          </a>
         </div>
       </div>
     </section>

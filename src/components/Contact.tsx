@@ -9,19 +9,19 @@ const Contact = () => {
     {
       icon: <Mail className="h-6 w-6" />,
       title: "Email",
-      value: "your.email@example.com",
-      href: "mailto:your.email@example.com"
+      value: "shahmeet1official@gmail.com",
+      href: "mailto:shahmeet1official@gmail.com"
     },
     {
       icon: <Phone className="h-6 w-6" />,
       title: "Phone",
-      value: "+1 (555) 123-4567",
-      href: "tel:+15551234567"
+      value: "+1 (437) 328-3998",
+      href: "tel:+14373283998"
     },
     {
       icon: <MapPin className="h-6 w-6" />,
       title: "Location",
-      value: "Your City, Country",
+      value: "London, ON, Canada",
       href: "#"
     }
   ];
@@ -30,28 +30,22 @@ const Contact = () => {
     {
       icon: <Github className="h-5 w-5" />,
       name: "GitHub",
-      href: "https://github.com/yourusername",
+      href: "https://github.com/meet32001",
       color: "hover:text-foreground"
     },
     {
       icon: <Linkedin className="h-5 w-5" />,
       name: "LinkedIn",
-      href: "https://linkedin.com/in/yourusername",
+      href: "https://www.linkedin.com/in/meetshah30012002/",
       color: "hover:text-cyber-blue"
     },
-    {
-      icon: <Twitter className="h-5 w-5" />,
-      name: "Twitter",
-      href: "https://twitter.com/yourusername",
-      color: "hover:text-cyber-blue"
-    }
   ];
 
   return (
     <section id="contact" className="py-20 px-4 bg-background">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-cyber bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-cyber bg-clip-text text-primary">
             Get In Touch
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -75,7 +69,6 @@ const Contact = () => {
                       First Name
                     </label>
                     <Input 
-                      placeholder="John" 
                       className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300"
                     />
                   </div>
@@ -84,7 +77,6 @@ const Contact = () => {
                       Last Name
                     </label>
                     <Input 
-                      placeholder="Doe" 
                       className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300"
                     />
                   </div>
@@ -96,7 +88,6 @@ const Contact = () => {
                   </label>
                   <Input 
                     type="email" 
-                    placeholder="john.doe@example.com" 
                     className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300"
                   />
                 </div>
@@ -106,7 +97,6 @@ const Contact = () => {
                     Subject
                   </label>
                   <Input 
-                    placeholder="Project Discussion" 
                     className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300"
                   />
                 </div>

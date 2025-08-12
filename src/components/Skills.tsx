@@ -20,10 +20,10 @@ const Skills = () => {
       skills: [
         { name: "Node.js / Express.js", level: 90 },
         { name: "Python / Java", level: 85 },
-        { name: "RESTful APIs", level: 95 },
+        { name: "RESTful APIs", level: 80 },
+        { name: "Firebase", level: 95 },
         { name: "PostgreSQL", level: 90 },
-        { name: "MongoDB", level: 85 },
-        { name: "Firebase", level: 80 }
+        { name: "MongoDB", level: 85 }
       ],
       color: "cyber-purple"
     },
@@ -42,19 +42,19 @@ const Skills = () => {
       title: "Tools & Others",
       skills: [
         { name: "Git / GitHub", level: 95 },
+        { name: "Figma", level: 95 },
         { name: "Postman", level: 85 },
-        { name: "Figma", level: 80 },
-        { name: "Agile", level: 90 },
-        { name: "Machine Learning", level: 75 },
-        { name: "IoT Projects", level: 80 }
+        { name: "Agile", level: 80 },
+        { name: "IoT Projects", level: 80 },
+        { name: "Machine Learning", level: 75 }
       ],
       color: "neon-pink"
     }
   ];
 
   const certifications = [
-    "Finalist of Hackathon 2022",
-    "Robofest Round 1 winner",
+    { label: "Finalist of Hackathon 2022", link: "https://www.linkedin.com/posts/meetshah30012002_throwback-robofest-utufest-activity-7356749295305297920-6b0F?utm_source=share&utm_medium=member_desktop&rcm=ACoAADZNrHoBMVMZaliGusD6xnKrxHe2_cr-OEs" },
+    { label: "Robofest Round 1 winner", link: "https://www.linkedin.com/posts/meetshah30012002_throwback-robofest-utufest-activity-7356749295305297920-6b0F?utm_source=share&utm_medium=member_desktop&rcm=ACoAADZNrHoBMVMZaliGusD6xnKrxHe2_cr-OEs" },
   ];
 
   return (
@@ -112,13 +112,18 @@ const Skills = () => {
           <CardContent>
             <div className="flex flex-wrap justify-center gap-3">
               {certifications.map((cert, index) => (
-                <Badge 
+                <a
                   key={index}
-                  variant="outline" 
-                  className="text-primary border-primary/50 hover:bg-primary/10 hover:border-primary transition-all duration-300 px-4 py-2"
+                  href={cert.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  {cert}
-                </Badge>
+                  <Badge 
+                    className="text-white border-cyber-blue bg-transparent hover:bg-cyber-blue hover:text-black shadow-sm hover:shadow-[0_0_10px_hsla(190,100%,50%,0.5)] border-2 transition-all duration-300 px-4 py-2"
+                  >
+                    {cert.label}
+                  </Badge>
+                </a>
               ))}
             </div>
           </CardContent>
