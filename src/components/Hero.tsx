@@ -264,7 +264,7 @@ const Hero = () => {
           <div className="w-2 h-2 bg-cyber-purple rounded-full animate-pulse delay-1000 dot" />
           <div className="absolute -top-20 -right-20 flex items-center justify-center w-40 h-40 hover-image opacity-0 transition-opacity duration-300 pointer-events-none">
             <img
-              src="/src/assets/hero-bg.jpg"
+              src="hero-bg.jpg"
               alt="Profile"
               className="w-64 h-40 object-cover rounded-lg shadow-lg"
             />
@@ -277,12 +277,15 @@ const Hero = () => {
           data-hover-target
         >
           <div className="w-2 h-2 bg-neon-pink rounded-full animate-pulse delay-500 dot" />
-          <div className="absolute -top-20 -right-28 flex items-center justify-center w-72 h-48 hover-image opacity-0 transition-opacity duration-300 pointer-events-none">
+          <div className="absolute -top-20 -right-28 flex flex-col items-center justify-center w-72 h-48 hover-image opacity-0 transition-opacity duration-300 pointer-events-none">
             <img
-              src="src/assets/Screenshot 2025-07-28 at 3.22.22 PM.png"
+              src="Screenshot 2025-07-28 at 3.22.22 PM.png"
               alt="Profile"
               className="w-64 h-40 object-cover rounded-lg shadow-lg"
             />
+            <span className="mt-2 text-xs text-white">
+              Website & Web App Development
+            </span>
           </div>
         </div>
 
@@ -309,12 +312,15 @@ const Hero = () => {
           data-hover-target
         >
           <div className="w-2 h-2 bg-cyber-blue rounded-full animate-pulse dot" />
-          <div className="absolute -top-20 -left-20 flex items-center justify-center w-40 h-80 hover-image opacity-0 transition-opacity duration-300 pointer-events-none">
+          <div className="absolute -top-20 -left-20 flex flex-col items-center justify-center w-40 h-80 hover-image opacity-0 transition-opacity duration-300 pointer-events-none">
             <img
-              src="/src/assets/app.png"
+              src="app.png"
               alt="Profile"
               className="w-40 h-80 object-cover rounded-lg shadow-lg"
             />
+            <span className="mt-2 text-xs text-white  px-2 py-1 rounded">
+              Mobile App Development
+            </span>
           </div>
         </div>
       </div>

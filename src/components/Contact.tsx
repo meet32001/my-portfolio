@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,6 +6,51 @@ import { Textarea } from "@/components/ui/textarea";
 import { Mail, Phone, MapPin, Send, Github, Linkedin, Twitter } from "lucide-react";
 
 const Contact = () => {
+  const [loading, setLoading] = useState(false);
+  const [resultMsg, setResultMsg] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setResultMsg(null);
+
+    const form = e.currentTarget;
+    const data = new FormData(form);
+
+    // Honeypot: if filled, likely a bot; bail out silently
+    if ((data.get("company") as string)?.length) return;
+
+    // Normalize website: auto-prepend https:// if missing
+    const rawWebsite = (data.get("website") as string | null)?.trim() || "";
+    const normalizedWebsite = rawWebsite && !/^https?:\/\//i.test(rawWebsite)
+      ? `https://${rawWebsite}`
+      : rawWebsite;
+
+    const payload = {
+      fullName: `${data.get("firstName") || ""} ${data.get("lastName") || ""}`.trim(),
+      website: normalizedWebsite,
+      phone: (data.get("phone") as string) || "",
+      email: data.get("email") as string,
+      subject: data.get("subject") as string,
+      message: data.get("message") as string,
+    };
+
+    try {
+      setLoading(true);
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('Network error');
+      setResultMsg('Thanks! Your message has been sent.');
+      form.reset();
+    } catch (err) {
+      setResultMsg('Sorry, something went wrong. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const contactInfo = [
     {
       icon: <Mail className="h-6 w-6" />,
@@ -62,65 +108,54 @@ const Contact = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">
-                      First Name
-                    </label>
-                    <Input 
-                      className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300"
-                    />
+                    <label className="text-sm font-medium text-foreground mb-2 block">First Name</label>
+                    <Input name="firstName" required className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300" />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">
-                      Last Name
-                    </label>
-                    <Input 
-                      className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300"
-                    />
+                    <label className="text-sm font-medium text-foreground mb-2 block">Last Name</label>
+                    <Input name="lastName" required className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-2 block">Website (optional)</label>
+                    <Input name="website" type="text" placeholder="www.example.com" className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300" />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-2 block">Phone number</label>
+                    <Input name="phone" type="tel" required placeholder="+1 555 123 4567" className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300" />
                   </div>
                 </div>
                 
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
-                    Email
-                  </label>
-                  <Input 
-                    type="email" 
-                    className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300"
-                  />
+                  <label className="text-sm font-medium text-foreground mb-2 block">Email</label>
+                  <Input name="email" type="email" required className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300" />
                 </div>
                 
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
-                    Subject
-                  </label>
-                  <Input 
-                    className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300"
-                  />
+                  <label className="text-sm font-medium text-foreground mb-2 block">Subject</label>
+                  <Input name="subject" required className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300" />
                 </div>
                 
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
-                    Message
-                  </label>
-                  <Textarea 
-                    placeholder="Tell me about your project..." 
-                    rows={6}
-                    className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300 resize-none"
-                  />
+                  <label className="text-sm font-medium text-foreground mb-2 block">Message</label>
+                  <Textarea name="message" required placeholder="Tell me about your project..." rows={6} className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300 resize-none" />
                 </div>
                 
-                <Button 
-                  type="submit" 
-                  variant="cyber" 
-                  size="lg" 
-                  className="w-full group"
-                >
+                <input type="text" name="company" className="hidden" tabIndex={-1} autoComplete="off" />
+                <Button type="submit" variant="cyber" size="lg" className="w-full group" disabled={loading}>
                   <Send className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform duration-300" />
-                  Send Message
+                  {loading ? 'Sending...' : 'Send Message'}
                 </Button>
+                {resultMsg && (
+                  <p className={`text-center text-sm mt-2 ${resultMsg.includes('Thanks') ? 'text-cyber-green' : 'text-red-400'}`}>
+                    {resultMsg}
+                  </p>
+                )}
               </form>
             </CardContent>
           </Card>
