@@ -59,12 +59,6 @@ const Contact = () => {
       href: "mailto:shahmeet1official@gmail.com"
     },
     {
-      icon: <Phone className="h-6 w-6" />,
-      title: "Phone",
-      value: "+1 (437) 328-3998",
-      href: "tel:+14373283998"
-    },
-    {
       icon: <MapPin className="h-6 w-6" />,
       title: "Location",
       value: "London, ON, Canada",
@@ -107,8 +101,8 @@ const Contact = () => {
                 Send a Message
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <form className="space-y-4" onSubmit={handleSubmit}>
+            <CardContent className="space-y-4">
+              <form className="space-y-3" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-foreground mb-2 block">First Name</label>
@@ -143,7 +137,7 @@ const Contact = () => {
                 
                 <div>
                   <label className="text-sm font-medium text-foreground mb-2 block">Message</label>
-                  <Textarea name="message" required placeholder="Tell me about your project..." rows={6} className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300 resize-none" />
+                  <Textarea name="message" required placeholder="Tell me about your project..." rows={4} className="bg-background/50 border-border/50 focus:border-primary transition-colors duration-300 resize-none" />
                 </div>
                 
                 <input type="text" name="company" className="hidden" tabIndex={-1} autoComplete="off" />
