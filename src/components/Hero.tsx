@@ -397,7 +397,7 @@ export default Hero;
 const style = document.createElement("style");
 style.innerHTML = `
 .proximity-hover {
-  position: relative;
+  position: absolute;
   perspective: 1000px;
 }
 
