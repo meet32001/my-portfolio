@@ -1,35 +1,51 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'node:path'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react-swc";
+import path from "node:path";
 
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
+    alias: { "@": path.resolve(__dirname, "./src") },
   },
   server: {
-    proxy: {
-      '/api': { target: 'http://localhost:5050', changeOrigin: true },
-    },
+    host: true,
+    proxy: { "/api": { target: "http://localhost:5050", changeOrigin: true } },
+    hmr: { overlay: false }, // optional: no red error overlay
+  },
+  optimizeDeps: {
+    // pre-bundle big deps once; keeps reloads fast
+    include: [
+      "react", "react-dom",
+      "lucide-react",
+      "recharts",
+      "@radix-ui/react-tooltip",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-popover",
+      "@radix-ui/react-dropdown-menu"
+    ],
+    entries: ["src/main.tsx"],
+  },
+  esbuild: {
+    target: "es2020",
+    legalComments: "none",
   },
   build: {
+    sourcemap: false,           // faster cold builds
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks: {
-          react: ['react', 'react-dom'],
-          charts: ['recharts'],
-          icons: ['lucide-react'],
+          react: ["react", "react-dom"],
+          charts: ["recharts"],
+          icons: ["lucide-react"],
           ui: [
-            '@radix-ui/react-tooltip',
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-popover',
-            '@radix-ui/react-dropdown-menu'
-          ]
-        }
-      }
+            "@radix-ui/react-tooltip",
+            "@radix-ui/react-dialog",
+            "@radix-ui/react-popover",
+            "@radix-ui/react-dropdown-menu",
+          ],
+        },
+      },
     },
-    chunkSizeWarningLimit: 1000 // optional: increases warning limit to 1MB
-  }
-})
+  },
+});

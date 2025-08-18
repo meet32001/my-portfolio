@@ -1,4 +1,3 @@
-// Hero.tsx
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Github, Linkedin, Download, Mail } from "lucide-react";
@@ -8,18 +7,24 @@ const Hero = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const pointMaterialRef = useRef<THREE.PointsMaterial | null>(null);
   const topDotMaterialRef = useRef<THREE.PointsMaterial | null>(null);
-  const [lineColor, setLineColor] = useState("#00ffff");
-  const [lineMaterial, setLineMaterial] = useState<THREE.LineBasicMaterial | null>(null);
+  const [lineColor, setLineColor] = useState("#00ffff"); // will cycle through blend
+  const [dotColor, setDotColor] = useState("#00ffff");
+  const [lineMaterial, setLineMaterial] =
+    useState<THREE.LineBasicMaterial | null>(null);
   const trackingTextRef = useRef<HTMLDivElement | null>(null);
 
-  /* ---------- THREE.js scene ---------- */
   useEffect(() => {
     if (!canvasRef.current) return;
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0f0f0f);
 
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
     camera.position.z = 70;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -29,75 +34,105 @@ const Hero = () => {
     const group = new THREE.Group();
     scene.add(group);
 
-    // Top floating dots
+    // Glow dot material (top)
     const topDotMaterial = new THREE.PointsMaterial({
-      color: new THREE.Color("#00ffff"),
+      color: new THREE.Color(dotColor),
       size: 0.4,
       transparent: true,
       opacity: 0.8,
     });
     topDotMaterialRef.current = topDotMaterial;
 
-    const topDots: THREE.Vector3[] = [];
-    for (let i = 0; i < 50; i++) {
-      topDots.push(
-        new THREE.Vector3((Math.random() - 0.5) * 100, Math.random() * 50, (Math.random() - 0.5) * 100)
+    const topDots = [];
+    const topDotCount = 50;
+    for (let i = 0; i < topDotCount; i++) {
+      const dot = new THREE.Vector3(
+        (Math.random() - 0.5) * 100,
+        Math.random() * 50, // top half only
+        (Math.random() - 0.5) * 100
       );
+      topDots.push(dot);
     }
-    const topDotGeometry = new THREE.BufferGeometry().setFromPoints(topDots);
-    group.add(new THREE.Points(topDotGeometry, topDotMaterial));
 
-    // Bottom grid points
+    const topDotGeometry = new THREE.BufferGeometry().setFromPoints(topDots);
+    const topPointCloud = new THREE.Points(topDotGeometry, topDotMaterial);
+    group.add(topPointCloud);
+
+    // Bottom network structure
     const gridSize = 20;
     const spacing = 5;
-    const bottomPoints: THREE.Vector3[] = [];
+    const bottomPoints = [];
     for (let i = -gridSize; i <= gridSize; i++) {
       for (let j = -gridSize; j <= gridSize; j++) {
-        bottomPoints.push(new THREE.Vector3(i * spacing, Math.random() * 5 - 40, j * spacing));
+        const x = i * spacing;
+        const z = j * spacing;
+        const y = Math.random() * 5 - 40; // Clamp to lower Y
+        bottomPoints.push(new THREE.Vector3(x, y, z));
       }
     }
 
-    // Rising stars (subset of bottom points)
-    type RisingStar = { index: number; originY: number; velocity: number };
+    // Rising stars: select 10% of bottomPoints randomly
+    type RisingStar = {
+      index: number;
+      originY: number;
+      velocity: number;
+    };
     const risingStars: RisingStar[] = [];
     const risingCount = Math.floor(bottomPoints.length * 0.1);
-    const chosen = new Set<number>();
+    const chosenIndices = new Set<number>();
     while (risingStars.length < risingCount) {
-      const idx = Math.floor(Math.random() * bottomPoints.length);
-      if (!chosen.has(idx)) {
-        chosen.add(idx);
-        risingStars.push({ index: idx, originY: bottomPoints[idx].y, velocity: Math.random() * 0.02 + 0.01 });
+      const i = Math.floor(Math.random() * bottomPoints.length);
+      if (!chosenIndices.has(i)) {
+        chosenIndices.add(i);
+        risingStars.push({
+          index: i,
+          originY: bottomPoints[i].y,
+          velocity: Math.random() * 0.02 + 0.01,
+        });
       }
     }
 
-    const pointMaterial = new THREE.PointsMaterial({ color: new THREE.Color("#00ffff"), size: 0.4 });
+    const pointMaterial = new THREE.PointsMaterial({
+      color: new THREE.Color(dotColor),
+      size: 0.4,
+    });
     pointMaterialRef.current = pointMaterial;
-
-    const bottomGeometry = new THREE.BufferGeometry().setFromPoints(bottomPoints);
+    const bottomGeometry = new THREE.BufferGeometry().setFromPoints(
+      bottomPoints
+    );
     const pointCloud = new THREE.Points(bottomGeometry, pointMaterial);
     group.add(pointCloud);
 
-    const lm = new THREE.LineBasicMaterial({ color: 0x00ffff });
-    setLineMaterial(lm);
+    const lineMaterial = new THREE.LineBasicMaterial({ color: 0x00ffff });
+    setLineMaterial(lineMaterial);
 
-    // Connect grid neighbors
+    // Connect points in grid pattern
     const cols = gridSize * 2 + 1;
     for (let i = 0; i < bottomPoints.length; i++) {
       const right = i + 1;
       const below = i + cols;
       if (i % cols !== cols - 1 && right < bottomPoints.length) {
-        group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([bottomPoints[i], bottomPoints[right]]), lm));
+        const geom = new THREE.BufferGeometry().setFromPoints([
+          bottomPoints[i],
+          bottomPoints[right],
+        ]);
+        group.add(new THREE.Line(geom, lineMaterial));
       }
       if (below < bottomPoints.length) {
-        group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([bottomPoints[i], bottomPoints[below]]), lm));
+        const geom = new THREE.BufferGeometry().setFromPoints([
+          bottomPoints[i],
+          bottomPoints[below],
+        ]);
+        group.add(new THREE.Line(geom, lineMaterial));
       }
     }
 
     // Mouse parallax
-    let mouseX = 0, mouseY = 0;
-    const onMouseMove = (e: MouseEvent) => {
-      mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-      mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+    let mouseX = 0,
+      mouseY = 0;
+    const onMouseMove = (event: MouseEvent) => {
+      mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+      mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
     };
     window.addEventListener("mousemove", onMouseMove);
 
@@ -107,16 +142,21 @@ const Hero = () => {
       group.rotation.y += 0.001 + mouseX * 0.01;
       group.rotation.x = -0.3 + mouseY * 0.1;
 
-      const pos = bottomGeometry.attributes.position.array as Float32Array;
+      const positions = bottomGeometry.attributes.position
+        .array as Float32Array;
       for (let i = 0; i < bottomPoints.length; i++) {
-        const idx = i * 3;
+        const index = i * 3;
         const offset = i * 0.1;
-        pos[idx + 1] += Math.sin(performance.now() * 0.001 + offset) * 0.03;
+        positions[index + 1] +=
+          Math.sin(performance.now() * 0.001 + offset) * 0.03;
       }
-      for (const s of risingStars) {
-        const idx = s.index * 3;
-        pos[idx + 1] += s.velocity;
-        if (pos[idx + 1] > 30) pos[idx + 1] = s.originY;
+      // Animate "rising stars"
+      for (const star of risingStars) {
+        const idx = star.index * 3;
+        positions[idx + 1] += star.velocity;
+        if (positions[idx + 1] > 30) {
+          positions[idx + 1] = star.originY;
+        }
       }
       bottomGeometry.attributes.position.needsUpdate = true;
 
@@ -124,141 +164,181 @@ const Hero = () => {
     };
     animate();
 
-    // Resize
-    const onResize = () => {
+    const handleResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
-    window.addEventListener("resize", onResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
+      window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("resize", onResize);
       renderer.dispose();
       canvasRef.current?.removeChild(renderer.domElement);
     };
   }, []);
 
-  // Update line color
   useEffect(() => {
-    if (lineMaterial) lineMaterial.color.set(lineColor);
+    if (lineMaterial) {
+      lineMaterial.color.set(lineColor);
+    }
   }, [lineColor, lineMaterial]);
 
-  // Cycle palette + sync point colors
   useEffect(() => {
-    const colors = ["#00BFFF", "#1E90FF", "#4169E1", "#5F9EA0", "#4682B4", "#87CEEB", "#00CED1"];
-    let i = 0;
-    const id = setInterval(() => {
-      i = (i + 1) % colors.length;
-      setLineColor(colors[i]);
-      pointMaterialRef.current?.color.set(colors[i]);
-      topDotMaterialRef.current?.color.set(colors[i]);
-    }, 3000);
-    return () => clearInterval(id);
-  }, []);
-
-  /* ---------- Proximity hover (single-nearest target) ---------- */
-  useEffect(() => {
-    const targets = Array.from(document.querySelectorAll<HTMLElement>("[data-hover-target]"));
-    const ACTIVE_R = 120;
-
-    const onMove = (e: MouseEvent) => {
-      let nearest: HTMLElement | null = null;
-      let best = Infinity;
-
-      for (const el of targets) {
-        const r = el.getBoundingClientRect();
-        const cx = r.left + r.width / 2;
-        const cy = r.top + r.height / 2;
-        const d = Math.hypot(cx - e.clientX, cy - e.clientY);
-        if (d < best) { best = d; nearest = el; }
+    const colors = [
+      "#00BFFF",
+      "#1E90FF",
+      "#4169E1",
+      "#5F9EA0",
+      "#4682B4",
+      "#87CEEB",
+      "#00CED1",
+    ];
+    let index = 0;
+    const interval = setInterval(() => {
+      index = (index + 1) % colors.length;
+      setLineColor(colors[index]);
+      if (pointMaterialRef.current) {
+        pointMaterialRef.current.color.set(colors[index]);
       }
-
-      // only the closest target toggles within radius
-      for (const el of targets) el.removeAttribute("data-hovering");
-      if (nearest && best <= ACTIVE_R) nearest.setAttribute("data-hovering", "true");
-    };
-
-    window.addEventListener("mousemove", onMove);
-    return () => window.removeEventListener("mousemove", onMove);
+      if (topDotMaterialRef.current) {
+        topDotMaterialRef.current.color.set(colors[index]);
+      }
+    }, 3000);
+    return () => clearInterval(interval);
   }, []);
 
-  /* ---------- Title tilt tracking ---------- */
+  // Proximity hover effect for dot images
   useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      const el = trackingTextRef.current;
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      const cx = r.left + r.width / 2;
-      const cy = r.top + r.height / 2;
-      const dx = e.clientX - cx;
-      const dy = e.clientY - cy;
-      el.style.transform = `rotateX(${(-dy / 4).toFixed(2)}deg) rotateY(${(dx / 4).toFixed(2)}deg)`;
+    const handleMouseMove = (e: MouseEvent) => {
+      document.querySelectorAll("[data-hover-target]").forEach((el) => {
+        const rect = (el as HTMLElement).getBoundingClientRect();
+        const distance = Math.hypot(
+          rect.left + rect.width / 2 - e.clientX,
+          rect.top + rect.height / 2 - e.clientY
+        );
+        if (distance < 100) {
+          el.setAttribute("data-hovering", "true");
+        } else {
+          el.removeAttribute("data-hovering");
+        }
+      });
     };
-    window.addEventListener("mousemove", onMove);
-    return () => window.removeEventListener("mousemove", onMove);
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!trackingTextRef.current) return;
+
+      const rect = trackingTextRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const deltaX = e.clientX - centerX;
+      const deltaY = e.clientY - centerY;
+
+      // Increase sensitivity and responsiveness
+      const rotateX = (-deltaY / 4).toFixed(2);
+      const rotateY = (deltaX / 4).toFixed(2);
+
+      trackingTextRef.current.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div ref={canvasRef} className="absolute inset-0 z-0" />
 
-      {/* Floating proximity targets */}
       <div className="absolute inset-0">
-        {/* Top Right */}
-        <div className="absolute top-[25%] right-[17%] proximity-hover z-10" data-hover-target>
+        {/* Top Right - Personal Photo */}
+        <div
+          className="absolute top-[25%] right-[17%] proximity-hover"
+          data-hover-target
+        >
           <div className="w-2 h-2 bg-cyber-purple rounded-full animate-pulse delay-1000 dot" />
-          <div className="absolute -top-20 -right-20 flex items-center justify-center w-40 h-40 hover-image opacity-0 pointer-events-none">
-            <img src="hero-bg.jpg" alt="Profile" className="w-64 h-40 object-cover rounded-lg shadow-lg" />
-          </div>
-        </div>
-
-        {/* Bottom Right */}
-        <div className="absolute top-[80%] right-[20%] proximity-hover z-10" data-hover-target>
-          <div className="w-2 h-2 bg-neon-pink rounded-full animate-pulse delay-500 dot" />
-          <div className="absolute -top-20 -right-28 flex flex-col items-center justify-center w-72 h-48 hover-image opacity-0 pointer-events-none">
+          <div className="absolute -top-20 -right-20 flex items-center justify-center w-40 h-40 hover-image opacity-0 transition-opacity duration-300 pointer-events-none">
             <img
-              src="Screenshot 2025-07-28 at 3.22.22 PM.png"
-              alt="Web work"
+              src="IMG_2199.JPG"
+              alt="Profile"
               className="w-64 h-40 object-cover rounded-lg shadow-lg"
             />
-            <span className="mt-2 text-xs text-white">Website &amp; Web App Development</span>
           </div>
         </div>
 
-        {/* Bottom Left */}
-        <div className="absolute top-[70%] left-[28%] proximity-hover z-10" data-hover-target>
+        {/* Bottom Right - Location Image */}
+        <div
+          className="absolute top-[80%] right-[20%] proximity-hover"
+          data-hover-target
+        >
+          <div className="w-2 h-2 bg-neon-pink rounded-full animate-pulse delay-500 dot" />
+          <div className="absolute -top-20 -right-28 flex flex-col items-center justify-center w-72 h-48 hover-image opacity-0 transition-opacity duration-300 pointer-events-none">
+            <img
+              src="Screenshot 2025-07-28 at 3.22.22 PM.png"
+              alt="Profile"
+              className="w-64 h-40 object-cover rounded-lg shadow-lg"
+            />
+            <span className="mt-2 text-xs text-white">
+              Website & Web App Development
+            </span>
+          </div>
+        </div>
+
+        {/* Bottom Left - Website Screenshot */}
+        <div
+          className="absolute top-[70%] left-[28%] proximity-hover"
+          data-hover-target
+        >
           <div className="w-2 h-2 bg-cyber-green rounded-full animate-pulse delay-2000 dot" />
-          <div className="absolute -top-20 -left-20 flex items-center justify-center w-40 h-40 hover-image opacity-0 pointer-events-none">
+          <div className="absolute -top-20 -left-20 flex items-center justify-center w-40 h-40 hover-image opacity-0 transition-opacity duration-300 pointer-events-none">
             <div
-              className="relative w-40 h-40 rounded-full bg-black/70 border border-cyber-green shadow-xl flex items-center justify-center text-white text-sm text-center font-medium tracking-text"
+              className="relative w-40 h-40 rounded-full bg-black bg-opacity-70 border border-cyber-green shadow-xl flex items-center justify-center text-white text-sm text-center text-wrap text-balance font-medium tracking-text"
               ref={trackingTextRef}
             >
               Based in London, Canada
-              <span className="absolute w-full h-full border-4 border-cyber-green border-t-transparent rounded-full animate-spin-slow" />
+              <span className="absolute w-full h-full border-4 border-cyber-green border-t-transparent rounded-full animate-spin-slow"></span>
             </div>
           </div>
         </div>
 
-        {/* Top Left */}
-        <div className="absolute top-[25%] left-[17%] proximity-hover z-10" data-hover-target>
+        {/* Top Left - App Screenshot */}
+        <div
+          className="absolute top-[25%] left-[17%] proximity-hover"
+          data-hover-target
+        >
           <div className="w-2 h-2 bg-cyber-blue rounded-full animate-pulse dot" />
-          <div className="absolute -top-20 -left-20 flex flex-col items-center justify-center w-40 h-80 hover-image opacity-0 pointer-events-none">
-            <img src="app.png" alt="App" className="w-40 h-80 object-cover rounded-lg shadow-lg" />
-            <span className="mt-2 text-xs text-white px-2 py-1 rounded">Mobile App Development</span>
+          <div className="absolute -top-20 -left-20 flex flex-col items-center justify-center w-40 h-80 hover-image opacity-0 transition-opacity duration-300 pointer-events-none">
+            <img
+              src="app.png"
+              alt="Profile"
+              className="w-40 h-80 object-cover rounded-lg shadow-lg"
+            />
+            <span className="mt-2 text-xs text-white  px-2 py-1 rounded">
+              Mobile App Development
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Text + CTAs */}
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
         <div className="animate-slide-up">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-cyber bg-clip-text text-white">IT Developer</h1>
-          <h2 className="text-2xl md:text-3xl text-foreground mb-4">Full Stack Developer &amp; Problem Solver</h2>
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-cyber bg-clip-text text-white">
+            IT Developer
+          </h1>
+          <h2 className="text-2xl md:text-3xl text-foreground mb-4">
+            Full Stack Developer & Problem Solver
+          </h2>
           <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-            I craft forward-thinking digital solutions powered by modern web tech, scalable systems, and robust cloud
-            architecture.
+            <p>
+              I craft forward-thinking digital solutions powered by cutting-edge
+              technologies. My expertise lies in modern web development,
+              scalable system design, and robust cloud architecture.
+            </p>
           </p>
         </div>
 
@@ -276,7 +356,11 @@ const Hero = () => {
             variant="neon"
             size="lg"
             className="group"
-            onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={() => {
+              document
+                .getElementById("contact")
+                ?.scrollIntoView({ behavior: "smooth" });
+            }}
           >
             <Mail className="mr-2 h-5 w-5 group-hover:animate-pulse" />
             Get In Touch
@@ -308,23 +392,58 @@ const Hero = () => {
 
 export default Hero;
 
-/* ---------- Proximity CSS (injected once) ---------- */
-(() => {
-  if (typeof window === "undefined") return;
-  if (document.getElementById("proximity-hover-css")) return;
+// Proximity hover CSS (add globally if not already)
+// You can move this to your global stylesheet if preferred.
+const style = document.createElement("style");
+style.innerHTML = `
+.proximity-hover {
+  position: relative;
+  perspective: 1000px;
+}
 
-  const style = document.createElement("style");
+.proximity-hover .hover-image {
+  transform: rotateY(90deg);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  transform-origin: center;
+}
+
+.proximity-hover .dot {
+  transition: opacity 0.3s ease;
+}
+
+.proximity-hover:hover .hover-image,
+.proximity-hover[data-hovering="true"] .hover-image {
+  transform: rotateY(0deg);
+  opacity: 1 !important;
+}
+
+.proximity-hover:hover .dot,
+.proximity-hover[data-hovering="true"] .dot {
+  opacity: 0;
+}
+
+.animate-spin-slow {
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.tracking-text {
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+  transform-style: preserve-3d;
+  transform-origin: center;
+}
+`;
+if (
+  typeof window !== "undefined" &&
+  !document.getElementById("proximity-hover-css")
+) {
   style.id = "proximity-hover-css";
-  style.innerHTML = `
-  .proximity-hover { position: relative; perspective: 1000px; }
-  .proximity-hover .hover-image { transform: rotateY(90deg); opacity: 0; pointer-events: none; transition: transform .5s ease, opacity .5s ease; transform-origin: center; }
-  .proximity-hover .dot { transition: opacity .3s ease; }
-  /* ONLY proximity flag triggers visibility */
-  .proximity-hover[data-hovering="true"] .hover-image { transform: rotateY(0deg); opacity: 1 !important; }
-  .proximity-hover[data-hovering="true"] .dot { opacity: 0; }
-  .animate-spin-slow { animation: spin 3s linear infinite; }
-  @keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
-  .tracking-text { transition: transform .1s ease-out; will-change: transform; transform-style: preserve-3d; transform-origin: center; }
-  `;
   document.head.appendChild(style);
-})();
+}

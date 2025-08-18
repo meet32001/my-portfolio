@@ -1,0 +1,6 @@
+{
+  "watch": ["server"],
+  "ext": "cjs,js,json",
+  "ignore": ["node_modules", "dist", "build", ".vite", ".git"],
+  "delay": "150"
+}
