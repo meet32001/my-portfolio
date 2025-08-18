@@ -9,6 +9,14 @@ const config: Config = {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}"
   ],
+  safelist: [
+    'opacity-100',
+    'pointer-events-auto',
+    'hover-image',
+    'transition-opacity',
+    'duration-300',
+    'z-50'
+  ],
   theme: {
     container: {
       center: true,
