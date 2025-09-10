@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -109,6 +110,7 @@ const App = () => {
         <div id="cursor-trail-container" className="pointer-events-none fixed top-0 left-0 w-full h-full z-[9998]" />
         <Toaster />
         <Sonner />
+        <SpeedInsights />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
